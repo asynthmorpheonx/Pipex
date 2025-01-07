@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 14:54:45 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/07 20:34:48 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/07 20:43:25 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ void	parent_execute(int *pip, char **argv, char **envp)
 	char	*cmd;
 	int		fd;
 
-	fd = open(argv[1], O_RDONLY, 0644);
+	fd = open(argv[1], O_RDONLY, 0777);
 	if (fd == -1)
 		exit(EXIT_FAILURE);
 	dup2(fd, 0);
@@ -75,9 +75,7 @@ void	child_execute(int *pip, char **argv, char **envp)
 	char	*cmd;
 	int		fd;
 
-	fd = open(argv[4], O_WRONLY | O_CREAT, 0644);
-	if (fd == -1)
-		exit(EXIT_FAILURE);
+	fd = open(argv[4], O_WRONLY | O_CREAT, 0777);
 	dup2(pip[0], 0);
 	dup2(fd, 1);
 	close(pip[1]);
@@ -116,12 +114,11 @@ int main(int argc, char **argv, char **envp)
 	int		fd[2];
 	pid_t	pid;
 
-	if (argc != 5 || pipe(fd))
-		return (1);
+	if (argc != 5)
+		return (0);
+	pipe(fd);
 	pid = fork();
-	if (pid == -1)
-		return (1);
-	else if (pid > 0)
+	if (pid > 0)
 		parent_execute(fd, argv, envp);
 	else if (pid == 0)
 		child_execute(fd, argv, envp);
