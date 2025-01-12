@@ -4,22 +4,22 @@ OFILES = $(CFILES:.c=.o)
 NAME = pipex
 LIBNAME = libpipex.a
 CC = cc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -g3 -Wall -Wextra -Werror #-fsanitize=address
 
 all: $(LIBNAME)
-	@$(CC) pipex.c $(LIBNAME) -o $(NAME)
+	$(CC) $(CFLAGS) pipex.c  $(LIBNAME) -o $(NAME)
 
 $(LIBNAME): $(OFILES)
-	@ar rcs $(LIBNAME) $(OFILES)
+	ar rcs $(LIBNAME) $(OFILES)
 
 %.o: %.c
-	@$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 clean:
-	@rm -rf $(OFILES)
+	rm -rf $(OFILES)
 
 fclean: clean
-	@rm -rf $(NAME) $(LIBNAME)
+	rm -rf $(NAME) $(LIBNAME)
 
 re: fclean all
 
