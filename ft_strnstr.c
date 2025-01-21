@@ -6,11 +6,11 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 17:40:48 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/11 22:28:41 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/21 20:28:26 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_utils.h"
 
 char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 {

@@ -6,11 +6,11 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 22:31:23 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/11 23:51:42 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/21 20:28:32 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_utils.h"
 
 char	*searcher(char **envp)
 {

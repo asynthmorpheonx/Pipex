@@ -6,11 +6,11 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 18:09:45 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/11 22:28:29 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/21 20:28:23 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_utils.h"
 
 char	*ft_strjoin(char const *s1, char const *s2)
 {

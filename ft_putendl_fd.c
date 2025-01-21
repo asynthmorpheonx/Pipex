@@ -1,38 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_free.c                                          :+:      :+:    :+:   */
+/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/11 22:32:30 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/11 23:52:30 by mel-mouh         ###   ########.fr       */
+/*   Created: 2024/11/01 18:37:25 by mel-mouh          #+#    #+#             */
+/*   Updated: 2025/01/21 20:28:11 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_utils.h"
 
-void	ft_free(char **strs1, char **strs2)
+void	ft_putendl_fd(char *s1, char *s2, int fd)
 {
-	int	i;
+	size_t	i;
 
 	i = 0;
-	if (strs1)
-	{
-		while (strs1[i])
-		{
-			free(strs1[i]);
-			i++;
-		}
-		free(strs1);
-	}
-	if (!strs2)
+	if (s1 == NULL || fd < 0)
 		return ;
-	i = 0;
-	while (strs2[i])
+	while (s1[i] != '\0')
 	{
-		free(strs2[i]);
+		write(fd, &s1[i], 1);
 		i++;
 	}
-	free(strs2);
+	i = 0;
+	if (s2)
+	{
+		while (s2[i] != '\0')
+		{
+			write(fd, &s2[i], 1);
+			i++;
+		}	
+	}
+	write(fd, "\n", 1);
 }

@@ -6,11 +6,11 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/27 20:46:46 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/11 22:30:21 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/21 20:28:18 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "pipex.h"
+#include "pipex_utils.h"
 
 static char	**ft_frees(char **strs, int j)
 {
