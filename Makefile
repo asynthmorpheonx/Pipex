@@ -1,4 +1,4 @@
-CFILES = utils.c ft_split.c ft_strjoin.c ft_strnstr.c searcher.c ft_putendl_fd.c
+CFILES = utils.c split_and_join.c utils_to_execute.c searchers.c print_errors.c
 OFILES = $(CFILES:.c=.o)
 NAME = pipex
 LIBNAME = libpipex.a

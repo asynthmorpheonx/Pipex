@@ -1,7 +1,0 @@
-TODO norms
-TODO if there is no path there is no output
-
->> TODO: Permission denied: 126 (if Some command could not be executed with execve.. cuz the perms are incorrect)
->> TODO: Permission denied: 1 (if some file was not openned with success)
->> TODO: Command not found: 127
-

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_putendl_fd.c                                    :+:      :+:    :+:   */
+/*   print_errors.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/01 18:37:25 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/24 21:16:49 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/25 00:17:24 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 
 void	ft_putendl_fd(char *s1, char *s2, int fd)
 {
-	char *str;
-	char *temp;
+	char	*str;
+	char	*temp;
 
 	if (s1 == NULL || fd < 0)
 		return ;
@@ -24,4 +24,14 @@ void	ft_putendl_fd(char *s1, char *s2, int fd)
 	free(str);
 	write(fd, temp, ft_strlen(temp));
 	free(temp);
+}
+
+void	print_if_error(int the_error, char *probleme)
+{
+	if (the_error == 2)
+		ft_putendl_fd("No such file or directory: ", probleme, 2);
+	else if (the_error == 127)
+		ft_putendl_fd("command not found: ", probleme, 2);
+	else if (the_error == 126)
+		ft_putendl_fd("permission denied: ", probleme, 2);
 }

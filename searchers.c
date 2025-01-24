@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strnstr.c                                       :+:      :+:    :+:   */
+/*   searchers.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 17:40:48 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/21 20:28:26 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/25 00:17:19 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,17 @@ char	*ft_strnstr(const char *haystack, const char *needle, size_t len)
 		if (needle[j] == '\0')
 			return ((char *)haystack + i);
 		i++;
+	}
+	return (NULL);
+}
+
+char	*searcher(char **envp)
+{
+	while (*envp)
+	{
+		if (ft_strnstr(*envp, "PATH=", 5))
+			return (*envp + 5);
+		envp++;
 	}
 	return (NULL);
 }
