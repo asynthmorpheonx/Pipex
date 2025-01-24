@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 14:54:45 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/21 20:27:59 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/24 23:45:55 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,8 @@ void	print_if_error(int the_error, char *probleme)
 
 int	check_access(char **path, char *cmd)
 {
-	char	*temp;
 	char	*str;
-	int		i;
 
-	i = 0;
 	if (cmd[0] == '/' || cmd[0] == '~' || cmd[0] == '.')
 	{
 		if (access(cmd, F_OK | X_OK) == 0)
@@ -38,21 +35,14 @@ int	check_access(char **path, char *cmd)
 	}
 	if (!path)
 		return (127);
-	while (path[i])
+	str = extract_path(path, cmd);
+	if (str)
 	{
-		temp = ft_strjoin(path[i], "/");
-		str = ft_strjoin(temp, cmd);
-		if (access(str, F_OK) == 0)
-		{
-			if (access(str, X_OK) == 0)
-				return (free(temp), free(str), 0);
-			return (free(temp), free(str), 126);
-		}
-		free(temp);
-		free(str);
-		i++;
+		if (access(str, X_OK) == 0)
+			return (free(str), 0);
+		return (free(str), 126);
 	}
-	return (127);
+	return (free(str), 127);
 }
 
 char	*extract_path(char **path, char *cmd)
@@ -84,71 +74,77 @@ char	*extract_path(char **path, char *cmd)
 	return (NULL);
 }
 
+void	handler(char **path, char **arg)
+{
+	int		access_status;
+
+	access_status = check_access(path, arg[0]);
+	print_if_error(access_status, arg[0]);
+	ft_free(path, arg);
+	exit(access_status);
+}
+
+void	init_nd_execute(char **arg, char **envp)
+{
+	char **path;
+	char *cmd;
+
+	path = NULL;
+	cmd = NULL;
+	if (!arg[0])
+	{
+		print_if_error(127, " ");
+		exit(127);
+	}
+	if (envp)
+		path = ft_split(searcher(envp), ':');
+	cmd = extract_path(path, arg[0]);
+	if (!cmd)
+		handler(path, arg);
+	execve(cmd, arg, envp);
+	ft_free(arg, path);
+	free(cmd);
+	exit(2);
+}
 void	firstChild_exec(int *pip, char **argv, char **envp)
 {
-	char	**SecArg;
-	char	**paths;
-	char	*cmd;
-	int		access_status;
 	int		fd;
 
-	paths = NULL;
-	cmd = NULL;
 	fd = open(argv[1], O_RDONLY);
 	if (fd == -1)
-		exit(2);
-	dup2(fd, 0);
-	dup2(pip[1], 1);
-	close(pip[0]);
-	SecArg = ft_split(argv[2], ' ');
-	if (envp)
-		paths = ft_split(searcher(envp), ':');
-	cmd = extract_path(paths, SecArg[0]);
-	if (!cmd)
 	{
-		access_status = check_access(paths, SecArg[0]);
-		print_if_error(access_status, SecArg[0]);
-		ft_free(paths, SecArg);
-		exit(access_status);
+		print_if_error(2, argv[1]);
+		close(pip[0]);
+		close(pip[1]);
+		exit(2);
 	}
-	execve(cmd, SecArg, envp);
-	ft_free(SecArg, paths);
-	free(cmd);
+	dup2(fd, 0);
 	close(fd);
+	dup2(pip[1], 1);
+	close(pip[1]);
+	close(pip[0]);
+	init_nd_execute(ft_split(argv[2], ' '), envp);
 	exit(2);
 }
 
 void	secChild_exec(int *pip, char **argv, char **envp)
 {
-	char	**ThirArg;
-	char	**paths;
-	char	*cmd;
-	int		access_status;
 	int		fd;
 
-	paths = NULL;
-	cmd = NULL;
-	fd = open(argv[4], O_WRONLY | O_CREAT, 0777);
+	fd = open(argv[4], O_WRONLY | O_CREAT, 0644);
 	if (fd == -1)
-		exit(2);
+	{
+		print_if_error(126, argv[4]);
+		close(pip[0]);
+		close(pip[1]);
+		exit(1);
+	}
 	dup2(pip[0], 0);
 	dup2(fd, 1);
-	close(pip[1]);
-	ThirArg = ft_split(argv[3], ' ');
-	if (envp)
-		paths = ft_split(searcher(envp), ':');
-	cmd = extract_path(paths, ThirArg[0]);
-	if (!cmd)
-	{
-		access_status = check_access(paths, ThirArg[0]);
-		print_if_error(access_status, ThirArg[0]);
-		ft_free(paths, ThirArg);
-		exit(access_status);
-	}
-	execve(cmd, ThirArg, envp);
-	ft_free(ThirArg, paths);
-	free(cmd);
 	close(fd);
+	close(pip[0]);
+	close(pip[1]);
+	init_nd_execute(ft_split(argv[3], ' '), envp);
 	exit(2);
 }
 
@@ -172,10 +168,10 @@ int main(int argc, char **argv, char **envp)
 		exit(1);
 	if (pid2 == 0)
 		secChild_exec(fd, argv, envp);
-	close(fd[0]);
-	close(fd[1]);
 	waitpid(pid1, NULL, 0);
 	waitpid(pid2, &status, 0);
+	close(fd[0]);
+	close(fd[1]);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);

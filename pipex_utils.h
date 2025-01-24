@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipex.h                                            :+:      :+:    :+:   */
+/*   pipex_utils.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 22:17:17 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/21 20:27:25 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/21 21:14:40 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef PIPEX_UTILS_H
-#define PIPEX_UTILS_H
+# define PIPEX_UTILS_H
 
-#include <fcntl.h>
-#include <string.h>
-#include <errno.h>
-#include <error.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/wait.h>
+# include <fcntl.h>
+# include <string.h>
+# include <errno.h>
+# include <error.h>
+# include <stdio.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <sys/wait.h>
 
 size_t	ft_strlen(const char *str);
 void	ft_putendl_fd(char *s1, char *s2, int fd);
