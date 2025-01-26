@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/10/24 17:40:48 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/25 00:17:19 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/25 16:30:59 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,4 +45,10 @@ char	*searcher(char **envp)
 		envp++;
 	}
 	return (NULL);
+}
+
+void	ft_close(int *pip)
+{
+	close(pip[0]);
+	close(pip[1]);
 }

@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/11 22:17:17 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/25 00:35:19 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/26 01:18:43 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,16 @@
 # include <unistd.h>
 # include <stdlib.h>
 # include <sys/wait.h>
+
+typedef struct s_struct
+{
+	int				**pipes;
+	int				in_file;
+	int				out_file;
+	int				cmd_count;
+	int				pipe_count;
+	pid_t			*pids;
+}	t_container;
 
 size_t	ft_strlen(const char *str);
 void	ft_putendl_fd(char *s1, char *s2, int fd);

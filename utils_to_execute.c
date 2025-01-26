@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/25 00:28:39 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/25 00:29:19 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/25 23:46:29 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ void	init_nd_execute(char **arg, char **envp)
 
 	path = NULL;
 	cmd = NULL;
-	if (!arg[0])
+	if (!arg[0] || !arg[0])
 	{
-		print_if_error(127, " ");
+		print_if_error(127, "Invalid command");
 		exit(127);
 	}
 	if (envp)
@@ -94,5 +94,6 @@ void	init_nd_execute(char **arg, char **envp)
 	execve(cmd, arg, envp);
 	ft_free(arg, path);
 	free(cmd);
+	ft_putendl_fd("error :", "execve failed", 2);
 	exit(2);
 }
