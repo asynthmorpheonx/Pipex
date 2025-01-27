@@ -6,7 +6,7 @@
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/01/07 14:54:45 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/26 00:27:35 by mel-mouh         ###   ########.fr       */
+/*   Updated: 2025/01/26 21:00:38 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ void	firstchild_exec(int *pip, char **argv, char **envp)
 	dup2(pip[1], 1);
 	close(pip[0]);
 	close(pip[1]);
-	ft_close(pip);
 	init_nd_execute(ft_split(argv[2], ' '), envp);
 	exit(2);
 }

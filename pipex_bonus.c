@@ -5,171 +5,178 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: mel-mouh <mel-mouh@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/01/07 14:54:45 by mel-mouh          #+#    #+#             */
-/*   Updated: 2025/01/26 02:10:41 by mel-mouh         ###   ########.fr       */
+/*   Created: 2025/01/27 16:26:49 by mel-mouh          #+#    #+#             */
+/*   Updated: 2025/01/27 18:28:34 by mel-mouh         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex_utils.h"
 
-void	free_pipes(t_container *jmla)
-{
-    int	i;
-
-    i = 0;
-    while (i < jmla->pipe_count)
-    {
-        free(jmla->pipes[i]);
-        i++;
-    }
-    free(jmla->pipes);
-}
-
-void	make_pipes(t_container *jmla)
+void	close_pipes(t_box *container)
 {
 	int	i;
 
 	i = 0;
-	while (i < jmla->pipe_count)
+	while(i < container->pipe_count)
 	{
-		jmla->pipes[i] = malloc(2 * sizeof(int));
-		if (!jmla->pipes[i] || pipe(jmla->pipes[i]) == -1)
-		{
-			free_pipes(jmla);
-			free(jmla->pids);
-			exit (1);
-		}
+		close(container->pipes[i][0]);
+		close(container->pipes[i][1]);
 		i++;
 	}
 }
 
-void	close_pipes(t_container *jmla)
+void	free_pipes(t_box *container)
 {
-    int	i;
+	int	i;
 
-    i = 0;
-    while (i < jmla->pipe_count)
-    {
-        close(jmla->pipes[i][0]);
-        close(jmla->pipes[i][1]);
-        i++;
-    }
+	i = 0;
+	while(i < container->pipe_count)
+	{
+		free(container->pipes[i]);
+		i++;
+	}
+	free(container->pipes);
 }
 
-int	open_a_file(t_container *jmla, char **argv,int argc, int i)
+void	free_t_box(t_box *container)
 {
-	int fd;
-	
+	close_pipes(container);
+	free_pipes(container);
+	free(container->pids);
+	free(container);
+}
+
+void	open_a_file(t_box *container, char **av, int i)
+{
 	if (i == 0)
 	{
-		fd = open(argv[1], O_RDONLY);
-		if (jmla->in_file == -1)
+		container->in_file = open(av[i], O_RDONLY);
+		if (container->in_file == -1)
 		{
-			print_if_error(2, argv[1]);
-            close_pipes(jmla);
-            free_pipes(jmla);
-            exit(2);
+			print_if_error(2, av[i]);
+			free_t_box(container);
+			exit(2);
 		}
 	}
-	else if (i == jmla->pipe_count)
-    {
-        fd = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
-        if (jmla->out_file == -1)
-        {
-            print_if_error(126, argv[argc - 1]);
-            close_pipes(jmla);
-            free_pipes(jmla);
-            exit(1);
-        }
+	else if (i == container->pipe_count)
+	{
+		container->out_file = open(av[i + 3], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+		if (container->out_file == -1)
+		{
+			print_if_error(126, av[i + 3]);
+			free_t_box(container);
+			exit(126);
+		}
+	}
+}
+
+void	child_execute(t_box *container, char **av, int i, char **envp)
+{
+	open_a_file(container, av, i);
+	if (i == 0)
+	{
+		dup2(container->in_file, 0);
+		dup2(container->pipes[i][1], 1);
+		close(container->in_file);
+		close(container->pipes[i][1]);
+	}
+	else if (i == container->pipe_count)
+	{
+		dup2(container->out_file, 1);
+		dup2(container->pipes[i - 1][0], 0);
+		close(container->out_file);
+		close(container->pipes[i - 1][0]);
 	}
 	else
-		return (-1);
-	return (fd);
+	{
+		dup2(container->pipes[i - 1][0], 0);
+		dup2(container->pipes[i][1], 1);
+		close(container->pipes[i - 1][0]);
+		close(container->pipes[i][1]);
+	}
+	init_nd_execute(ft_split(av[i + 2], ' '), envp);
 }
 
-void	child_exec(t_container *jmla, char **argv, char **envp, int i, int argc)
-{
-    if (i == 0)
-    {
-        jmla->in_file = open_a_file(jmla, argv, argc, i);
-        dup2(jmla->in_file, 0);
-        dup2(jmla->pipes[i][1], 1);
-    }
-    else if (i == jmla->pipe_count)
-    {
-        jmla->out_file = open_a_file(jmla, argv, argc, i);
-        dup2(jmla->pipes[i - 1][0], 0);
-        dup2(jmla->out_file, 1);
-    }
-    else
-    {
-        dup2(jmla->pipes[i - 1][0], 0);
-        dup2(jmla->pipes[i][1], 1);
-    }
-    close_pipes(jmla);
-    init_nd_execute(ft_split(argv[i + 2], ' '), envp);
-    exit(2);
-}
-
-t_container *init_bjmla(int argc)
-{
-    t_container	*jmla;
-
-    jmla = malloc(sizeof(t_container));
-	if (!jmla)
-		exit(1);
-	jmla->pipe_count = argc - 4;
-    jmla->pipes = malloc(jmla->pipe_count * sizeof(int *));
-    jmla->pids = malloc((jmla->pipe_count + 1) * sizeof(pid_t));
-	if (!jmla->pipes || !jmla->pids)
-        exit(1);
-    make_pipes(jmla);
-	return (jmla);
-}
-
-void	wait_all_childs(t_container *jmla, int *status)
+void	make_pipes(t_box *container)
 {
 	int	i;
 
 	i = 0;
-	while(i < jmla->pipe_count)
+	while (i < container->pipe_count)
 	{
-		waitpid(jmla->pids[i], &status[0], 0);
+		container->pipes[i] = malloc(sizeof(int) * 2);
+		if (!container->pipes[i] || pipe(container->pipes[i]) == -1)
+			exit (1);
 		i++;
 	}
 }
 
-void	free_containder(t_container *jmla)
+t_box	*init_t_box(int argc)
 {
-	close_pipes(jmla);
-	free_pipes(jmla);
-	free(jmla->pids);
+	t_box *container;
+
+	container = malloc(sizeof(t_box));
+	if (!container)
+	{
+		ft_putendl_fd("error :", "malloc failed while allocating", 2);
+		exit(1);
+	}
+	container->pipe_count = argc - 4;
+	container->pipes = malloc(sizeof(int *) * container->pipe_count);
+	container->pids = malloc(sizeof(pid_t) * (argc - 3));
+	if (!container->pipes || !container->pids)
+	{
+		ft_putendl_fd("error :", "malloc failed while allocating", 2);
+		exit(1);
+	}
+	make_pipes(container);
+	return (container);
 }
 
-int	main(int argc, char **argv, char **envp)
+void	wait_all_childs(t_box *container, int *status)
 {
-    t_container	*jmla;
-    int			status;
-    int			i;
+	int	i;
 
-    if (argc < 5)
-		return (1);
-	jmla = init_bjmla(argc);
-    i = 0;
-    while (i < jmla->pipe_count + 1)
-    {
-        jmla->pids[i] = fork();
-        if (jmla->pids[i] == -1)
-            return (free_containder(jmla), 1);
-        if (jmla->pids[i] == 0)
-            child_exec(jmla, argv, envp, i, argc);
-        i++;
-    }
-    close_pipes(jmla);
-    wait_all_childs(jmla, &status);
-    free_pipes(jmla);
-    free(jmla->pids);
-    if (WIFEXITED(status))
-        return (WEXITSTATUS(status));
-    return (1);
+	i = 0;
+	while (i < container->pipe_count + 1)
+	{
+		waitpid(container->pids[i], &status[0], 0);
+		i++;
+	}
+}
+
+void	forking_for_executing(t_box *container, char **av, char **envp)
+{
+	int	i;
+
+	i = 0;
+	while (i < container->pipe_count + 1)
+	{
+		container->pids[i] = fork();
+		if (container->pids[i] == -1)
+			exit (1);
+		else if (container->pids[i] == 0)
+			child_execute(container, av, i, envp);
+		if (i > 0)
+			close(container->pipes[i - 1][0]);
+		if (i < container->pipe_count)
+			close(container->pipes[i][1]);
+		i++;
+	}
+}
+
+int	main(int ac, char **av, char **envp)
+{
+	t_box	*container;
+	int		status;
+
+	if (ac < 5)
+		return (ft_putendl_fd("syntax error :", "./pipex infile cmd1 cmd2 ... outfile", 2), 1);
+	container = init_t_box(ac);
+	forking_for_executing(container, av, envp);
+	wait_all_childs(container, &status);
+	free_t_box(container);
+	if (WIFEXITED(status))
+		return (WEXITSTATUS(status));
+	return (1);
 }
