@@ -31,8 +31,9 @@ int	main(int argc, char **argv, char **envp)
 	}
 	container = init_it(argv, envp, fd);
 	safer_fork(pids, container);
-	wait_twice(&status, pids);
 	close_node(container);
+	wait_twice(&status, pids);
+	free(container);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
 	return (1);

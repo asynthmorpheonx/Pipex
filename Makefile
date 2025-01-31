@@ -18,7 +18,9 @@ $(LIBNAME): $(OFILES)
 %.o: %.c
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-bonus: $(OBFILES)
+bonus: $(BONUSLIB)
+
+$(BONUSLIB): $(OBFILES)
 	@ar rcs $(BONUSLIB) $(OBFILES)
 	@$(CC) $(CFLAGS) pipex_bonus.c  $(BONUSLIB) -o $(NAME)
 

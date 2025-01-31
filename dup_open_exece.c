@@ -16,7 +16,6 @@ void	close_node(t_utils *container)
 {
 	close(container->pipe[0]);
 	close(container->pipe[1]);
-	free(container);
 }
 
 void	safer_dup(t_utils *container)

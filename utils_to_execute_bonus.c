@@ -83,7 +83,7 @@ void	init_nd_execute(char **arg, char **envp)
 	cmd = NULL;
 	if (!arg[0] || !arg[0])
 	{
-		print_if_error(127, "Invalid command");
+		print_if_error(127, "' '");
 		ft_free(arg, NULL);
 		exit(127);
 	}
@@ -93,7 +93,7 @@ void	init_nd_execute(char **arg, char **envp)
 	if (!cmd)
 		handler(path, arg);
 	execve(cmd, arg, envp);
-	perror("execve ");
+	print_if_error(127, arg[0]);
 	ft_free(arg, path);
 	free(cmd);
 	exit(2);

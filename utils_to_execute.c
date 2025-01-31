@@ -95,8 +95,8 @@ void	init_nd_execute(char **arg, char **envp)
 	if (!cmd)
 		handler(path, arg);
 	execve(cmd, arg, envp);
+	print_if_error(127, arg[0]);
 	ft_free(arg, path);
 	free(cmd);
-	ft_putendl_fd("error :", "execve failed", 2);
 	exit(2);
 }
