@@ -19,7 +19,7 @@ void	open_a_file(t_box *container, char **av, int i)
 		container->in_file = open(av[1], O_RDONLY);
 		if (container->in_file == -1)
 		{
-			print_if_error(2, av[i]);
+			print_if_error(2, av[1]);
 			free_t_box(container);
 			exit(2);
 		}
