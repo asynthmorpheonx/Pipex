@@ -29,7 +29,7 @@ void	safer_dup(t_utils *container)
 int	check_file(char *file)
 {
 	if (access(file, F_OK) == -1)
-		return (127);
+		return (2);
 	else if (access(file, F_OK) == 0)
 		return (126);
 	return (0);
