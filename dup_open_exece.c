@@ -57,6 +57,7 @@ void	safer_open(t_utils *container, int i)
 	if (container->in_file == -1 || container->out_file == -1)
 	{
 		close_node(container);
+		free(container);
 		exit(1);
 	}
 	safer_dup(container);
