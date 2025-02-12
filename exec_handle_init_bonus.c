@@ -67,7 +67,7 @@ void	child_execute(t_box *container, char **av, int i, char **envp)
 		close(container->pipes[i][1]);
 	}
 	free_t_box(container);
-	init_nd_execute(ft_split(av[i + 2], ' '), envp);
+	init_nd_execute_b(ft_split(av[i + 2], ' '), envp);
 }
 
 t_box	*init_t_box(int argc, int heredoc)

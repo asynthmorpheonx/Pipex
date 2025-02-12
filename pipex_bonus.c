@@ -23,7 +23,7 @@ t_box	*handle_here_doc(char **av, int ac)
 		write(1, "heredoc>", 8);
 		input = get_next_line(0);
 		if (!input)
-			write(1, "\n", 1);
+			break ;
 		if (ft_strncmp(av[2], input, ft_strlen(input) - 1) == 0)
 		{
 			free(input);

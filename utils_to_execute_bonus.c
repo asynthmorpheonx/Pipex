@@ -12,6 +12,30 @@
 
 #include "pipex_utils_bonus.h"
 
+int	check_access(char **path, char *cmd)
+{
+	char	*str;
+
+	if (access(cmd, F_OK) && (cmd[0] == '/' || cmd[0] == '~' || cmd[0] == '.'))
+	{
+		if (access(cmd, F_OK | X_OK) == 0)
+			return (0);
+		else if (access(cmd, F_OK) == 0 && access(cmd, X_OK) == -1)
+			return (126);
+	}
+	if (!path)
+		return (127);
+	str = extract_path(path, cmd);
+	if (str)
+	{
+		if (access(str, X_OK) == 0)
+			return (free(str), 0);
+		if (access(str, F_OK) == 0 && access(str, X_OK) == -1)
+			return (free(str), 126);
+	}
+	return (free(str), 127);
+}
+
 char	*extract_path(char **path, char *cmd)
 {
 	char	*temp;
@@ -28,7 +52,7 @@ char	*extract_path(char **path, char *cmd)
 	}
 	if (!path)
 		return (NULL);
-	while (path[i])
+	while (path[i] && cmd[0] != '/' && cmd[0] != '~' && cmd[0] != '.')
 	{
 		temp = ft_strjoin(path[i], "/");
 		str = ft_strjoin(temp, cmd);
@@ -41,29 +65,6 @@ char	*extract_path(char **path, char *cmd)
 	return (NULL);
 }
 
-int	check_access(char **path, char *cmd)
-{
-	char	*str;
-
-	if (cmd[0] == '/' || cmd[0] == '~' || cmd[0] == '.')
-	{
-		if (access(cmd, F_OK | X_OK) == 0)
-			return (0);
-		else if (access(cmd, F_OK) == 0 && access(cmd, X_OK) == -1)
-			return (126);
-	}
-	if (!path)
-		return (127);
-	str = extract_path(path, cmd);
-	if (str)
-	{
-		if (access(str, X_OK) == 0)
-			return (free(str), 0);
-		return (free(str), 126);
-	}
-	return (free(str), 127);
-}
-
 void	handler(char **path, char **arg)
 {
 	int		access_status;
@@ -74,17 +75,18 @@ void	handler(char **path, char **arg)
 	exit(access_status);
 }
 
-void	init_nd_execute(char **arg, char **envp)
+void	init_nd_execute_b(char **arg, char **envp)
 {
 	char	**path;
 	char	*cmd;
 
 	path = NULL;
 	cmd = NULL;
-	if (!arg[0] || !arg[0])
+	if (!arg[0] || !arg)
 	{
-		print_if_error(127, "' '");
-		ft_free(arg, NULL);
+		print_if_error(127, "Invalid command");
+		if (arg)
+			ft_free(arg, NULL);
 		exit(127);
 	}
 	if (envp)

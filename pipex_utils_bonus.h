@@ -46,7 +46,7 @@ void	wait_all_childs(t_box *container, int *status);
 void	print_if_error(int the_error, char *probleme);
 char	*ft_strjoin(char const *s1, char const *s2);
 void	ft_putendl_fd(char *s1, char *s2, int fd);
-void	init_nd_execute(char **arg, char **envp);
+void	init_nd_execute_b(char **arg, char **envp);
 char	*extract_path(char **path, char *cmd);
 int		check_access(char **path, char *cmd);
 void	ft_free(char **strs1, char **strs2);
