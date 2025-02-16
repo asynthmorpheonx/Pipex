@@ -27,7 +27,7 @@ static void	handle_here_doc(char *av, t_box **container)
 
 	while (1)
 	{
-		write(1, "heredoc>", 8);
+		write(1, ">", 1);
 		input = get_next_line(0);
 		if (input)
 			temp = ft_strjoin(av, "\n");

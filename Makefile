@@ -25,11 +25,11 @@ $(BONUSLIB): $(OBFILES)
 	@$(CC) $(CFLAGS) pipex_bonus.c  $(BONUSLIB) -o $(NAME)
 
 clean:
-	@rm -rf $(OFILES) $(LIBNAME) $(BONUSLIB) $(OBFILES)
+	rm -rf $(OFILES) $(LIBNAME) $(BONUSLIB) $(OBFILES)
 
 fclean: clean
-	@rm -rf $(NAME)
+	rm -rf $(NAME)
 
 re: fclean all
 
-.PHONY: all clean fclean re
+.PHONY: all clean fclean re bonus
