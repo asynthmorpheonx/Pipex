@@ -39,7 +39,6 @@ void	forking_for_executing(t_box *container, char **av, char **envp);
 void	child_execute(t_box *container, char **av, int i, char **envp);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 int		ft_strncmp(const char *str1, const char *str2, size_t n);
-t_box	*handle_here_doc(char **av, int ac);
 void	*ft_memcpy(void *dest, const void *src, size_t n);
 void	open_a_file(t_box *container, char **av, int i);
 void	wait_all_childs(t_box *container, int *status);

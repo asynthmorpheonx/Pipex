@@ -12,29 +12,39 @@
 
 #include "pipex_utils_bonus.h"
 
-t_box	*handle_here_doc(char **av, int ac)
+static void	double_free(char **s1, char **s2)
+{
+	free(*s1);
+	*s1 = NULL;
+	free(*s2);
+	*s2 = NULL;
+}
+
+static void	handle_here_doc(char *av, t_box **container)
 {
 	char	*input;
-	t_box	*container;
+	char	*temp;
 
-	container = init_t_box(ac, 1);
 	while (1)
 	{
 		write(1, "heredoc>", 8);
 		input = get_next_line(0);
-		if (!input)
-			break ;
-		if (ft_strncmp(av[2], input, ft_strlen(input) - 1) == 0)
+		if (input)
+			temp = ft_strjoin(av, "\n");
+		if (!ft_strncmp(temp, input, ft_strlen(temp)) || !input)
 		{
-			free(input);
+			if (!input)
+				ft_putendl_fd("pipex: warning: ",
+					"here-document at some line delimited by end-of-file", 2);
+			else
+				double_free(&temp, &input);
 			break ;
 		}
-		write(container->pipes[0][1], input, ft_strlen(input));
-		free(input);
+		write((*container)->pipes[0][1], input, ft_strlen(input));
+		double_free(&temp, &input);
 	}
-	close(container->pipes[0][1]);
+	close((*container)->pipes[0][1]);
 	get_next_line(-1);
-	return (container);
 }
 
 int	main(int ac, char **av, char **envp)
@@ -47,7 +57,10 @@ int	main(int ac, char **av, char **envp)
 		return (ft_putendl_fd("syntax error :",
 				"./pipex infile cmd1 cmd2 ... outfile", 2), 1);
 	if (ft_strncmp("here_doc", av[1], 9) == 0)
-		container = handle_here_doc(av, ac);
+	{
+		container = init_t_box(ac, 1);
+		handle_here_doc(av[2], &container);
+	}
 	else
 		container = init_t_box(ac, 0);
 	forking_for_executing(container, av, envp);
