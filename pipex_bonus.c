@@ -29,15 +29,13 @@ static void	handle_here_doc(char *av, t_box **container)
 	{
 		write(1, "heredoc>", 8);
 		input = get_next_line(0);
-		if (input)
-			temp = ft_strjoin(av, "\n");
+		temp = ft_strjoin(av, "\n");
 		if (!ft_strncmp(temp, input, ft_strlen(temp)) || !input)
 		{
 			if (!input)
 				ft_putendl_fd("pipex: warning: ",
 					"here-document at some line delimited by end-of-file", 2);
-			else
-				double_free(&temp, &input);
+			double_free(&temp, &input);
 			break ;
 		}
 		write((*container)->pipes[0][1], input, ft_strlen(input));
