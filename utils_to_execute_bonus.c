@@ -16,7 +16,8 @@ int	check_access(char **path, char *cmd)
 {
 	char	*str;
 
-	if (access(cmd, F_OK) && (cmd[0] == '/' || cmd[0] == '~' || cmd[0] == '.'))
+	if (access(cmd, F_OK) == 0
+		&& (cmd[0] == '/' || cmd[0] == '~' || cmd[0] == '.'))
 	{
 		if (access(cmd, F_OK | X_OK) == 0)
 			return (0);
